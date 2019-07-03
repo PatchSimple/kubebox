@@ -2824,11 +2824,12 @@ class Dashboard {
       if (!k8s.isPodRunning(pod)) return;
       const name = pod.metadata.name;
       const namespace = pod.metadata.namespace;
+      var filtered, container;
 
       if ( window.container_selected ) {
           filtered = pod.spec.containers.find( function (c) {
               return c.name === window.container_selected;
-          } );
+          });
 
           container = filtered.name;
       } else {
