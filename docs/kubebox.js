@@ -2826,7 +2826,11 @@ class Dashboard {
       const namespace = pod.metadata.namespace;
 
       if ( window.container_selected ) {
-          container = pod.spec.containers.filter( function (c) { return c.name === window.container_selected; } )[0].name;
+          filtered = pod.spec.containers.filter( function (c) {
+              return c.name === window.container_selected;
+          } );
+
+          container = filtered[0].name;
       } else {
           // FIXME: select which container in pod
           container = pod.spec.containers[0].name;
