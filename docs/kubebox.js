@@ -2766,7 +2766,7 @@ class Dashboard {
           callback : function () {
             graphs.find(g => g.visible).toggle();
             cpu_graph.toggle();
-          } 
+          }
         },
         'Net': {
           keys     : ['T', 't'],
@@ -2825,8 +2825,8 @@ class Dashboard {
       const name = pod.metadata.name;
       const namespace = pod.metadata.namespace;
 
-      if ( window.container_selected ) { 
-	const container = pod.spec.containers.filter( (container) => { return container.name === window.container_selected; } )[0].name;
+      if ( window.container_selected ) {
+	      const container = pod.spec.containers.filter( function (container) { return container.name === window.container_selected; } )[0].name;
       } else {
           // FIXME: select which container in pod
           const container = pod.spec.containers[0].name;
@@ -3639,7 +3639,7 @@ function login_form(screen, kube_config, kubebox, { closable } = { closable: fal
     bottom  : 6,
     align   : 'left',
     content : 'Cluster URL :',
-  }); 
+  });
 
   const url = blessed.textbox({
     // hide the URL input when a server URL is already provided
@@ -3702,7 +3702,7 @@ function login_form(screen, kube_config, kubebox, { closable } = { closable: fal
     bottom  : 2,
     align   : 'left',
     content : 'Token       :',
-  }); 
+  });
 
   const token = blessed.textbox({
     parent       : form,
@@ -35253,7 +35253,7 @@ exports.UNZIP = 7;
 function Zlib(mode) {
   if (mode < exports.DEFLATE || mode > exports.UNZIP)
     throw new TypeError("Bad argument");
-    
+
   this.mode = mode;
   this.init_done = false;
   this.write_in_progress = false;
@@ -35271,18 +35271,18 @@ Zlib.prototype.init = function(windowBits, level, memLevel, strategy, dictionary
   this.memLevel = memLevel;
   this.strategy = strategy;
   // dictionary not supported.
-  
+
   if (this.mode === exports.GZIP || this.mode === exports.GUNZIP)
     this.windowBits += 16;
-    
+
   if (this.mode === exports.UNZIP)
     this.windowBits += 32;
-    
+
   if (this.mode === exports.DEFLATERAW || this.mode === exports.INFLATERAW)
     this.windowBits = -this.windowBits;
-    
+
   this.strm = new zstream();
-  
+
   switch (this.mode) {
     case exports.DEFLATE:
     case exports.GZIP:
@@ -35308,12 +35308,12 @@ Zlib.prototype.init = function(windowBits, level, memLevel, strategy, dictionary
     default:
       throw new Error("Unknown mode " + this.mode);
   }
-  
+
   if (status !== exports.Z_OK) {
     this._error(status);
     return;
   }
-  
+
   this.write_in_progress = false;
   this.init_done = true;
 };
@@ -35325,31 +35325,31 @@ Zlib.prototype.params = function() {
 Zlib.prototype._writeCheck = function() {
   if (!this.init_done)
     throw new Error("write before init");
-    
+
   if (this.mode === exports.NONE)
     throw new Error("already finalized");
-    
+
   if (this.write_in_progress)
     throw new Error("write already in progress");
-    
+
   if (this.pending_close)
     throw new Error("close is pending");
 };
 
-Zlib.prototype.write = function(flush, input, in_off, in_len, out, out_off, out_len) {    
+Zlib.prototype.write = function(flush, input, in_off, in_len, out, out_off, out_len) {
   this._writeCheck();
   this.write_in_progress = true;
-  
+
   var self = this;
   process.nextTick(function() {
     self.write_in_progress = false;
     var res = self._write(flush, input, in_off, in_len, out, out_off, out_len);
     self.callback(res[0], res[1]);
-    
+
     if (self.pending_close)
       self.close();
   });
-  
+
   return this;
 };
 
@@ -35367,7 +35367,7 @@ Zlib.prototype.writeSync = function(flush, input, in_off, in_len, out, out_off, 
 
 Zlib.prototype._write = function(flush, input, in_off, in_len, out, out_off, out_len) {
   this.write_in_progress = true;
-  
+
   if (flush !== exports.Z_NO_FLUSH &&
       flush !== exports.Z_PARTIAL_FLUSH &&
       flush !== exports.Z_SYNC_FLUSH &&
@@ -35376,18 +35376,18 @@ Zlib.prototype._write = function(flush, input, in_off, in_len, out, out_off, out
       flush !== exports.Z_BLOCK) {
     throw new Error("Invalid flush value");
   }
-  
+
   if (input == null) {
     input = new Buffer(0);
     in_len = 0;
     in_off = 0;
   }
-  
+
   if (out._set)
     out.set = out._set;
   else
     out.set = bufferSet;
-  
+
   var strm = this.strm;
   strm.avail_in = in_len;
   strm.input = input;
@@ -35395,7 +35395,7 @@ Zlib.prototype._write = function(flush, input, in_off, in_len, out, out_off, out
   strm.avail_out = out_len;
   strm.output = out;
   strm.next_out = out_off;
-  
+
   switch (this.mode) {
     case exports.DEFLATE:
     case exports.GZIP:
@@ -35411,11 +35411,11 @@ Zlib.prototype._write = function(flush, input, in_off, in_len, out, out_off, out
     default:
       throw new Error("Unknown mode " + this.mode);
   }
-  
+
   if (status !== exports.Z_STREAM_END && status !== exports.Z_OK) {
     this._error(status);
   }
-  
+
   this.write_in_progress = false;
   return [strm.avail_in, strm.avail_out];
 };
@@ -35425,15 +35425,15 @@ Zlib.prototype.close = function() {
     this.pending_close = true;
     return;
   }
-  
+
   this.pending_close = false;
-  
+
   if (this.mode === exports.DEFLATE || this.mode === exports.GZIP || this.mode === exports.DEFLATERAW) {
     zlib_deflate.deflateEnd(this.strm);
   } else {
     zlib_inflate.inflateEnd(this.strm);
   }
-  
+
   this.mode = exports.NONE;
 };
 
@@ -35448,7 +35448,7 @@ Zlib.prototype.reset = function() {
       var status = zlib_inflate.inflateReset(this.strm);
       break;
   }
-  
+
   if (status !== exports.Z_OK) {
     this._error(status);
   }
@@ -35456,7 +35456,7 @@ Zlib.prototype.reset = function() {
 
 Zlib.prototype._error = function(status) {
   this.onerror(msg[status] + ': ' + this.strm.msg, status);
-  
+
   this.write_in_progress = false;
   if (this.pending_close)
     this.close();
@@ -52496,7 +52496,7 @@ module.exports = function privateDecrypt(private_key, enc, reverse) {
   } else {
     padding = 4;
   }
-  
+
   var key = parseKeys(private_key);
   var k = key.modulus.byteLength();
   if (enc.length > k || new bn(enc).cmp(key.modulus) >= 0) {
@@ -57505,7 +57505,7 @@ var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode) {
 		self.url = response.url
 		self.statusCode = response.status
 		self.statusMessage = response.statusText
-		
+
 		response.headers.forEach(function(header, key){
 			self.headers[key.toLowerCase()] = header
 			self.rawHeaders.push(key, header)
@@ -57593,7 +57593,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 				self.push(new Buffer(response))
 				break
 			}
-			// Falls through in IE8	
+			// Falls through in IE8
 		case 'text':
 			try { // This will fail when readyState = 3 in IE9. Switch mode and wait for readyState = 4
 				response = xhr.responseText
@@ -59432,13 +59432,13 @@ Script.prototype.runInContext = function (context) {
     if (!(context instanceof Context)) {
         throw new TypeError("needs a 'context' argument.");
     }
-    
+
     var iframe = document.createElement('iframe');
     if (!iframe.style) iframe.style = {};
     iframe.style.display = 'none';
-    
+
     document.body.appendChild(iframe);
-    
+
     var win = iframe.contentWindow;
     var wEval = win.eval, wExecScript = win.execScript;
 
@@ -59447,7 +59447,7 @@ Script.prototype.runInContext = function (context) {
         wExecScript.call(win, 'null');
         wEval = win.eval;
     }
-    
+
     forEach(Object_keys(context), function (key) {
         win[key] = context[key];
     });
@@ -59456,11 +59456,11 @@ Script.prototype.runInContext = function (context) {
             win[key] = context[key];
         }
     });
-    
+
     var winKeys = Object_keys(win);
 
     var res = wEval.call(win, this.code);
-    
+
     forEach(Object_keys(win), function (key) {
         // Avoid copying circular objects like `top` and `window` by only
         // updating existing context properties or new properties in the `win`
@@ -59475,9 +59475,9 @@ Script.prototype.runInContext = function (context) {
             defineProp(context, key, win[key]);
         }
     });
-    
+
     document.body.removeChild(iframe);
-    
+
     return res;
 };
 
@@ -59563,7 +59563,7 @@ function Canvas(width, height) {
 
   this.fontFg='normal'
   this.fontBg='normal'
-  this.color = 'normal'  
+  this.color = 'normal'
 }
 
 exports.colors = {
@@ -59581,13 +59581,13 @@ exports.colors = {
 var methods = {
   set: function(coord, mask) {
     this.content[coord] |= mask;
-    this.colors[coord] = exports.colors[this.color];    
+    this.colors[coord] = exports.colors[this.color];
     this.chars[coord] = null
   },
   unset: function(coord, mask) {
     this.content[coord] &= ~mask;
     this.colors[coord] = null
-    this.chars[coord] = null    
+    this.chars[coord] = null
   },
   toggle: function(coord, mask) {
     this.content[coord] ^= mask;
@@ -59601,7 +59601,7 @@ Object.keys(methods).forEach(function(method) {
     if(!(x >= 0 && x < this.width && y >= 0 && y < this.height)) {
       return;
     }
-    
+
     var coord = this.getCoord(x, y)
     var mask = map[y%4][x%2];
     methods[method].call(this, coord, mask);
@@ -59622,18 +59622,18 @@ Canvas.prototype.clear = function() {
 };
 
 Canvas.prototype.measureText = function(str) {
-  return {width: str.length * 2 + 2}  
+  return {width: str.length * 2 + 2}
 };
 
-Canvas.prototype.writeText = function(str, x, y) {  
+Canvas.prototype.writeText = function(str, x, y) {
   var coord = this.getCoord(x, y)
-  for (var i=0; i<str.length; i++) {    
+  for (var i=0; i<str.length; i++) {
     this.chars[coord+i]=str[i]
   }
 
   var bg = exports.colors[this.fontBg]
   var fg = exports.colors[this.fontFg]
-  
+
   this.chars[coord] = '\033[3' + fg + 'm' + '\033[4' + bg + 'm' +  this.chars[coord]
   this.chars[coord+str.length-1] += '\033[39m\033[49m'
 }
@@ -59652,9 +59652,9 @@ Canvas.prototype.frame = function frame(delimiter) {
     }
     else if(this.content[i] == 0) {
       result.push(' ');
-    } else {   
-      result.push('\033[3' + this.colors[i] + 'm'+String.fromCharCode(0x2800 + this.content[i]) + '\033[39m')      
-      //result.push(String.fromCharCode(0x2800 + this.content[i]))      
+    } else {
+      result.push('\033[3' + this.colors[i] + 'm'+String.fromCharCode(0x2800 + this.content[i]) + '\033[39m')
+      //result.push(String.fromCharCode(0x2800 + this.content[i]))
     }
   }
   result.push(delimiter);
@@ -59673,10 +59673,10 @@ var mat2d = glMatrix.mat2d;
 var vec2 = glMatrix.vec2;
 
 
-function Context(width, height, canvasClass) { 
+function Context(width, height, canvasClass) {
   var canvasClass = canvasClass || Canvas;
-  this._canvas = new canvasClass(width, height);  
-  this.canvas = this._canvas; //compatability  
+  this._canvas = new canvasClass(width, height);
+  this.canvas = this._canvas; //compatability
   this._matrix = mat2d.create();
   this._stack = [];
   this._currentPath = [];
@@ -59794,7 +59794,7 @@ Context.prototype.__defineSetter__('strokeStyle', function(val){
 });
 
 Context.prototype.clearRect = function(x, y, w, h) {
-  quad(this._matrix, x, y, w, h, this._canvas.unset.bind(this._canvas));  
+  quad(this._matrix, x, y, w, h, this._canvas.unset.bind(this._canvas));
 };
 
 Context.prototype.fillRect = function(x, y, w, h) {
@@ -59811,7 +59811,7 @@ Context.prototype.restore = function restore() {
   this._matrix = top;
 };
 
-Context.prototype.translate = function translate(x, y) {  
+Context.prototype.translate = function translate(x, y) {
   mat2d.translate(this._matrix, this._matrix, vec2.fromValues(x, y));
 };
 
@@ -59836,7 +59836,7 @@ Context.prototype.closePath = function closePath() {
 };
 
 Context.prototype.stroke = function stroke() {
-  
+
   if (this.lineWidth==0) return;
 
   var set = this._canvas.set.bind(this._canvas);
@@ -59874,9 +59874,9 @@ Context.prototype.measureText = function measureText(str) {
   return this._canvas.measureText(str)
 };
 
-Canvas.prototype.writeText = function(str, x, y) {  
+Canvas.prototype.writeText = function(str, x, y) {
   var coord = this.getCoord(x, y)
-  for (var i=0; i<str.length; i++) {    
+  for (var i=0; i<str.length; i++) {
     this.chars[coord+i]=str[i]
   }
 
@@ -59898,7 +59898,7 @@ Canvas.prototype.set = function(x,y) {
     if(!(x >= 0 && x < this.width && y >= 0 && y < this.height)) {
       return;
     }
-    
+
     var coord = this.getCoord(x, y)
     var mask = map[y%4][x%2];
 
@@ -59922,10 +59922,10 @@ Canvas.prototype.frame = function frame(delimiter) {
     }
     else if(this.content[i] == 0) {
       result.push(' ');
-    } else {   
+    } else {
         var colorCode = this.colors[i];
-        result.push(colorCode+String.fromCharCode(0x2800 + this.content[i]) + '\033[39m')      
-      //result.push(String.fromCharCode(0x2800 + this.content[i]))      
+        result.push(colorCode+String.fromCharCode(0x2800 + this.content[i]) + '\033[39m')
+      //result.push(String.fromCharCode(0x2800 + this.content[i]))
     }
   }
   result.push(delimiter);
@@ -59934,7 +59934,7 @@ Canvas.prototype.frame = function frame(delimiter) {
 
 module.exports = Context;
 module.exports.Canvas = function(width, height, canvasClass) {
-  
+
   var ctx;
 
   this.getContext = function() {
@@ -71318,7 +71318,7 @@ arguments[4][186][0].apply(exports,arguments)
 arguments[4][242][0].apply(exports,arguments)
 },{"buffer":130,"dup":242}],304:[function(require,module,exports){
 /*! Moment Duration Format v1.3.0
- *  https://github.com/jsmreese/moment-duration-format 
+ *  https://github.com/jsmreese/moment-duration-format
  *  Date: 2014-07-15
  *
  *  Duration format plugin function for the Moment.js library
@@ -71334,21 +71334,21 @@ arguments[4][242][0].apply(exports,arguments)
 	// returns "0" repeated qty times
 	function repeatZero(qty) {
 		var result = "";
-		
+
 		// exit early
 		// if qty is 0 or a negative number
 		// or doesn't coerce to an integer
 		qty = parseInt(qty, 10);
 		if (!qty || qty < 1) { return result; }
-		
+
 		while (qty) {
 			result += "0";
 			qty -= 1;
 		}
-		
+
 		return result;
 	}
-	
+
 	// padZero(str, len [, isRight])
 	// pads a string with zeros up to a specified length
 	// will not pad a string if its length is aready
@@ -71358,20 +71358,20 @@ arguments[4][242][0].apply(exports,arguments)
 	function padZero(str, len, isRight) {
 		if (str == null) { str = ""; }
 		str = "" + str;
-		
+
 		return (isRight ? str : "") + repeatZero(len - str.length) + (isRight ? "" : str);
 	}
-	
+
 	// isArray
 	function isArray(array) {
 		return Object.prototype.toString.call(array) === "[object Array]";
 	}
-	
+
 	// isObject
 	function isObject(obj) {
 		return Object.prototype.toString.call(obj) === "[object Object]";
 	}
-	
+
 	// findLast
 	function findLast(array, callback) {
 		var index = array.length;
@@ -71386,7 +71386,7 @@ arguments[4][242][0].apply(exports,arguments)
 		var index = 0,
 			max = array.length,
 			match;
-			
+
 		if (typeof callback !== "function") {
 			match = callback;
 			callback = function (item) {
@@ -71399,12 +71399,12 @@ arguments[4][242][0].apply(exports,arguments)
 			index += 1;
 		}
 	}
-	
+
 	// each
 	function each(array, callback) {
 		var index = 0,
 			max = array.length;
-			
+
 		if (!array || !max) { return; }
 
 		while (index < max) {
@@ -71412,7 +71412,7 @@ arguments[4][242][0].apply(exports,arguments)
 			index += 1;
 		}
 	}
-	
+
 	// map
 	function map(array, callback) {
 		var index = 0,
@@ -71420,103 +71420,103 @@ arguments[4][242][0].apply(exports,arguments)
 			ret = [];
 
 		if (!array || !max) { return ret; }
-				
+
 		while (index < max) {
 			ret[index] = callback(array[index], index);
 			index += 1;
 		}
-		
+
 		return ret;
 	}
-	
+
 	// pluck
 	function pluck(array, prop) {
 		return map(array, function (item) {
 			return item[prop];
 		});
 	}
-	
+
 	// compact
 	function compact(array) {
 		var ret = [];
-		
+
 		each(array, function (item) {
 			if (item) { ret.push(item); }
 		});
-		
+
 		return ret;
 	}
-	
+
 	// unique
 	function unique(array) {
 		var ret = [];
-		
+
 		each(array, function (_a) {
 			if (!find(ret, _a)) { ret.push(_a); }
 		});
-		
+
 		return ret;
 	}
-	
+
 	// intersection
 	function intersection(a, b) {
 		var ret = [];
-		
+
 		each(a, function (_a) {
 			each(b, function (_b) {
 				if (_a === _b) { ret.push(_a); }
 			});
 		});
-		
+
 		return unique(ret);
 	}
-	
+
 	// rest
 	function rest(array, callback) {
 		var ret = [];
-		
+
 		each(array, function (item, index) {
 			if (!callback(item)) {
 				ret = array.slice(index);
 				return false;
 			}
 		});
-		
+
 		return ret;
 	}
 
 	// initial
 	function initial(array, callback) {
 		var reversed = array.slice().reverse();
-		
+
 		return rest(reversed, callback).reverse();
 	}
-	
+
 	// extend
 	function extend(a, b) {
 		for (var key in b) {
 			if (b.hasOwnProperty(key)) { a[key] = b[key]; }
 		}
-		
+
 		return a;
 	}
-			
+
 	// define internal moment reference
 	var moment;
 
 	if (typeof require === "function") {
-		try { moment = require('moment'); } 
+		try { moment = require('moment'); }
 		catch (e) {}
-	} 
-	
+	}
+
 	if (!moment && root.moment) {
 		moment = root.moment;
 	}
-	
+
 	if (!moment) {
 		throw "Moment Duration Format cannot find Moment.js";
 	}
-	
+
 	// moment.duration.format([template] [, precision] [, settings])
 	moment.duration.fn.format = function () {
 
@@ -71642,7 +71642,7 @@ arguments[4][242][0].apply(exports,arguments)
 			// update remainder
 			remainder.subtract(wholeValue, momentType);
 		});
-	
+
 		// trim tokens array
 		if (settings.trim) {
 			tokens = (settings.trim === "left" ? rest : initial)(tokens, function (token) {
@@ -71652,8 +71652,8 @@ arguments[4][242][0].apply(exports,arguments)
 				return !(token.isLeast || (token.type != null && token.wholeValue));
 			});
 		}
-		
-		
+
+
 		// build output
 
 		// the first moment token can have special handling
@@ -71679,7 +71679,7 @@ arguments[4][242][0].apply(exports,arguments)
 			} else {
 				val = token.wholeValue.toString();
 			}
-			
+
 			// remove negative sign from the beginning
 			val = val.replace(/^\-/, "");
 
@@ -71696,20 +71696,20 @@ arguments[4][242][0].apply(exports,arguments)
 					case 1:
 						val += "." + padZero(decVal[0], settings.precision, true).slice(0, settings.precision);
 						break;
-						
+
 					case 2:
-						val += "." + padZero(decVal[1], settings.precision, true).slice(0, settings.precision);		
+						val += "." + padZero(decVal[1], settings.precision, true).slice(0, settings.precision);
 						break;
-						
+
 					case 3:
-						val += "." + padZero(repeatZero((+decVal[2]) - 1) + (decVal[0] || "0") + decVal[1], settings.precision, true).slice(0, settings.precision);		
+						val += "." + padZero(repeatZero((+decVal[2]) - 1) + (decVal[0] || "0") + decVal[1], settings.precision, true).slice(0, settings.precision);
 						break;
-					
+
 					default:
 						throw "Moment Duration Format: unable to parse token decimal value.";
 				}
 			}
-			
+
 			// add a negative sign if the value is negative and token is most significant
 			if (token.isMost && token.value < 0) {
 				val = "-" + val;
@@ -76601,7 +76601,7 @@ arguments[4][242][0].apply(exports,arguments)
     if (root.IPv6 === this) {
       root.IPv6 = _IPv6;
     }
-  
+
     return this;
   }
 
@@ -77670,14 +77670,14 @@ var colors = require('./colors.json')
 var x256 = module.exports = function (r, g, b) {
     var c = Array.isArray(r) ? r : [ r, g, b ];
     var best = null;
-    
+
     for (var i = 0; i < colors.length; i++) {
         var d = distance(colors[i], c)
         if (!best || d <= best.distance) {
             best = { distance : d, index : i };
         }
     }
-    
+
     return best.index;
 };
 x256.colors = colors;
@@ -78246,7 +78246,7 @@ function encodeFrame(data) {
     frame[2] = length >> 8;
     frame[3] = length & 0xFF;
     next = 4;
-  } else { 
+  } else {
     frame[1] = 0x80 | 127;
     frame[2] = length >> 56;
     frame[3] = length >> 48;
